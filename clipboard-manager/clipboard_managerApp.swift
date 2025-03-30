@@ -20,6 +20,8 @@ struct clipboard_managerApp: App {
 class AppDelegate: NSObject, NSApplicationDelegate {
     var panel: NSPanel!
     var hostingController: NSHostingController<ContentView>!
+    var statusItem: NSStatusItem!
+    var hotkeyHandler: HotkeySettingsHandler!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let contentView = ContentView()
@@ -36,8 +38,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         panel.backgroundColor = .clear
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.contentView = hostingController.view
-    
+
         setupStatusBarItem()
+        hotkeyHandler = HotkeySettingsHandler(panel: panel)
         HotKeysService.register() { self.show() }
         DBService.initialize()
         ClipboardService.watch()
@@ -57,13 +60,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.activate(ignoringOtherApps: true)
         panel.alphaValue = 0
         NSAnimationContext.runAnimationGroup({ context in
-           context.duration = 0.25
-           panel.animator().alphaValue = 1.0
-       })
+            context.duration = 0.25
+            panel.animator().alphaValue = 1.0
+        })
     }
 
-    // System Tray Icon
-    var statusItem: NSStatusItem!
+    @objc func showHotkeySettings() {
+        hotkeyHandler.showHotkeySettings()
+    }
 
     func setupStatusBarItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
@@ -71,13 +75,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             button.image = NSImage(systemSymbolName: "clipboard.fill", accessibilityDescription: nil)
         }
         let menu = NSMenu()
-                
-        menu.addItem(NSMenuItem(title: "Show", action: #selector(show), keyEquivalent: "s"))
-        //menu.addItem(NSMenuItem(title: "Run at startup", action: #selector(toggleRunAtStartup(_:)), keyEquivalent: ""))
+
+        menu.addItem(NSMenuItem(title: "Show", action: #selector(show), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "Choose Hotkey", action: #selector(showHotkeySettings), keyEquivalent: ""))
+        menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
-        
+
         statusItem.menu = menu
     }
-    
-   
 }

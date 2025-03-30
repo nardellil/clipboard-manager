@@ -1,5 +1,5 @@
 //
-//  HotKey.swift
+//  HotKeyService.swift
 //  clipboard-manager
 //
 //  Created by Luca Nardelli on 09/04/2019.
@@ -21,7 +21,7 @@ final class HotKeysService {
         hotkeyHandler = handler
         
         let hotkeyId = EventHotKeyID(signature: 1, id: 1)
-        
+    
         var eventType = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed))
         
         InstallEventHandler(GetApplicationEventTarget(), {(nextHanlder, theEvent, userData) -> OSStatus in
@@ -29,10 +29,21 @@ final class HotKeysService {
             return 1
         }, 1, &eventType, nil, nil)
 
-        RegisterEventHotKey(UInt32(41), UInt32(cmdKey), hotkeyId, GetApplicationEventTarget(), 0, &self.hotKeyRef)
+        let config = SettingsService.shared.hotKeyConfiguration
+        RegisterEventHotKey(config.keyCode, config.modifiers, hotkeyId, GetApplicationEventTarget(), 0, &self.hotKeyRef)
     }
     
     static func deregister() {
-        UnregisterEventHotKey(self.hotKeyRef)
+        if let hotKeyRef = self.hotKeyRef {
+            UnregisterEventHotKey(hotKeyRef)
+        }
+    }
+    
+    static func reregister() {
+        deregister()
+        
+        let hotkeyId = EventHotKeyID(signature: 1, id: 1)
+        let config = SettingsService.shared.hotKeyConfiguration
+        RegisterEventHotKey(config.keyCode, config.modifiers, hotkeyId, GetApplicationEventTarget(), 0, &self.hotKeyRef)
     }
 }
