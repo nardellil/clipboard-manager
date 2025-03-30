@@ -2,6 +2,12 @@
 
 A modern, efficient clipboard manager for macOS that helps you keep track of your clipboard history and easily access previously copied items.
 
+## 📥 Download
+
+Download the latest version of the app here:
+
+[📦 Download ClipboardManager v1.0.0](https://github.com/nardellil/clipboard-manager/releases/download/v1.0.0/clipboard-manager.zip)
+
 ## Features
 
 - 🔄 Automatic clipboard monitoring
