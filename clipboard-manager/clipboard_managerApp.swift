@@ -47,14 +47,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func show() {
-        if let screen = NSScreen.main {
-            let screenFrame = screen.frame
-            let panelSize = panel.frame.size
-            let origin = NSPoint(
-                x: (screenFrame.width - panelSize.width) / 2,
-                y: (screenFrame.height - panelSize.height) / 2
-            )
-            panel.setFrameOrigin(origin)
+        for screen in NSScreen.screens {
+           let mouseX = NSEvent.mouseLocation.x;
+           let mouseY = NSEvent.mouseLocation.y;
+           if screen.frame.minX < mouseX && screen.frame.maxX > mouseX
+               && screen.frame.minY < mouseY && screen.frame.maxY > mouseY {
+               let centerX = screen.frame.minX + (screen.frame.maxX - screen.frame.minX) / 2 - 150
+               let centerY = screen.frame.minY + (screen.frame.maxY - screen.frame.minY) / 2 + 200
+               panel.setFrameTopLeftPoint(NSPoint(x: centerX, y: centerY))
+           }
         }
         panel.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
