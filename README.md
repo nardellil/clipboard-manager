@@ -21,7 +21,7 @@ Download the latest version of the app here:
 
 ## Requirements
 
-- macOS 11.0 or later
+- macOS 15.2 or later
 - Xcode 13.0 or later (for development)
 - Swift 5.5 or later
 
